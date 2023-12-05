@@ -21,7 +21,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
             };
         } else {
             const link = await LinkService.getInstance().getLinkByMapping(mapping);
-            linkCache.setLinkMapping(link, mapping);
+            await linkCache.setLinkMapping(link, mapping);
 
             context.res = {
                 status: 301,
