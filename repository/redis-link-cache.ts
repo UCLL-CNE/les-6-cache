@@ -24,12 +24,13 @@ export class LinkCache {
         if (!this.instance) {
             const cacheHostName = process.env.REDIS_HOST_NAME;
             const cachePassword = process.env.REDIS_ACCESS_KEY;
+            const cachePort = process.env.REDIS_PORT || "6380";
 
             if (!cacheHostName) throw Error("REDIS_HOST_NAME is empty")
             if (!cachePassword) throw Error("REDIS_ACCESS_KEY is empty")
 
             const cacheConnection = createClient({
-                url: `rediss://${cacheHostName}:6380`,
+                url: `rediss://${cacheHostName}:${cachePort}`,
                 password: cachePassword
             });
 
@@ -47,8 +48,8 @@ export class LinkCache {
         await this.cacheClient.quit();
     }
 
-    async setLinkMapping(link: Link) {
-        await this.cacheClient.set(link.mapping, link.link, { EX: 600 });
+    async setLinkMapping(link: string, mapping :string) {
+        await this.cacheClient.set(mapping, link, { EX: 600 });
     }
 
     async getLinkMapping(mapping: string) {

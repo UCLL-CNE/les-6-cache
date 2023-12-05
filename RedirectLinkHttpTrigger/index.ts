@@ -10,7 +10,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
 
         const mapping = context.bindingData.mapping;
         const linkCache = await LinkCache.getInstance();
-        const cachedLink = linkCache.getLinkMapping(mapping);
+        const cachedLink = await linkCache.getLinkMapping(mapping);
 
         if (cachedLink) {
             context.res = {
@@ -19,9 +19,9 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
                     "Location": cachedLink
                 }
             };
-            linkCache.quit();
         } else {
             const link = await LinkService.getInstance().getLinkByMapping(mapping);
+            linkCache.setLinkMapping(link, mapping);
 
             context.res = {
                 status: 301,
@@ -30,6 +30,9 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
                 }
             };
         }
+
+
+        linkCache.quit();
     }, context)
 };
 
