@@ -16,7 +16,8 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
             context.res = {
                 status: 301,
                 headers: {
-                    "Location": cachedLink
+                    "Location": cachedLink,
+                    "LEESBARELINK-LOCATION": "cache"
                 }
             };
         } else {
@@ -26,13 +27,14 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
             context.res = {
                 status: 301,
                 headers: {
-                    "Location": link
+                    "Location": link,
+                    "LEESBARELINK-LOCATION": "db"
                 }
             };
         }
 
 
-        linkCache.quit();
+        await linkCache.quit();
     }, context)
 };
 
