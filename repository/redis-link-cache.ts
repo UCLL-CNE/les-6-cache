@@ -1,4 +1,5 @@
-import { RedisClientType, createClient } from "redis";
+import { createClient } from "redis";
+import { Link } from "../domain/link";
 
 interface RedisProxyInterface {
     set: (key: string, value: string) => Promise<string>,
@@ -40,5 +41,17 @@ export class LinkCache {
 
         }
         return this.instance;
+    }
+
+    async quit() {
+        await this.cacheClient.quit();
+    }
+
+    async setLinkMapping(link: Link) {
+        await this.cacheClient.set(link.mapping, link.link, { EX: 600 });
+    }
+
+    async getLinkMapping(mapping: string) {
+        return await this.cacheClient.get(mapping);
     }
 }
